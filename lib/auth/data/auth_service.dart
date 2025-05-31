@@ -48,7 +48,16 @@ class AuthService {
     try {
       UserCredential userCredential = await _auth
           .createUserWithEmailAndPassword(email: email, password: password);
-      return userCredential.user;
+      final user = userCredential.user;
+      if (user != null) {
+        // Add user to Firestore
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'email': user.email,
+          'createdAt': FieldValue.serverTimestamp(),
+          // Add more fields as needed
+        });
+      }
+      return user;
     } catch (e) {
       print("Email registration error: $e");
       return null;
@@ -104,7 +113,18 @@ class AuthService {
     try {
       final githubProvider = GithubAuthProvider();
       final userCredential = await _auth.signInWithProvider(githubProvider);
-      return userCredential.user;
+      final user = userCredential.user;
+      if (user != null) {
+        // Store or update user info in Firestore
+        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
+          'email': user.email,
+          'displayName': user.displayName,
+          'photoURL': user.photoURL,
+          'provider': 'github',
+          'createdAt': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true));
+      }
+      return user;
     } catch (e) {
       print("GitHub sign-in error: $e");
       return null;
