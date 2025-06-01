@@ -1,4 +1,7 @@
-import 'package:code2codes/auth/presentation/sign_up.dart';
+import 'package:code2codes/onboarding/OnboardingPage2.dart';
+import 'package:code2codes/onboarding/OnboardingPage3.dart';
+import 'package:code2codes/onboarding/OnboardingPage4.dart';
+import 'package:code2codes/options/OptionPage1.dart';
 import 'package:flutter/material.dart';
 
 class Wrapper extends StatelessWidget {
@@ -7,6 +10,6 @@ class Wrapper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // return either the Home or Authenticate widget
-    return SignUp();
+    return OptionPage1();
   }
 }

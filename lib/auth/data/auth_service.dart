@@ -116,23 +116,19 @@ class AuthService {
   Future<User?> signInWithGitHub() async {
     try {
       final githubProvider = GithubAuthProvider();
-
       UserCredential userCredential;
 
       if (kIsWeb) {
-        // 👉 Web uses signInWithPopup
         userCredential = await FirebaseAuth.instance.signInWithPopup(
           githubProvider,
         );
       } else {
-        // 👉 Mobile uses signInWithProvider
         userCredential = await FirebaseAuth.instance.signInWithProvider(
           githubProvider,
         );
       }
 
       final user = userCredential.user;
-
       if (user != null) {
         final userDoc = FirebaseFirestore.instance
             .collection('users')
@@ -140,7 +136,6 @@ class AuthService {
         final docSnapshot = await userDoc.get();
 
         if (!docSnapshot.exists) {
-          // First-time login – create user document
           await userDoc.set({
             'email': user.email,
             'displayName': user.displayName,
@@ -150,18 +145,47 @@ class AuthService {
             'lastSignedIn': FieldValue.serverTimestamp(),
           });
         } else {
-          // Existing user – update last sign-in timestamp
           await userDoc.update({'lastSignedIn': FieldValue.serverTimestamp()});
         }
       }
 
       return user;
-    } catch (e) {
-      print("GitHub sign-in failed: ${e.toString()}");
-      if (e is FirebaseAuthException) {
-        print("Error code: ${e.code}");
-        print("Error message: ${e.message}");
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'account-exists-with-different-credential') {
+        final pendingCred = e.credential;
+        final email = e.email;
+
+        // Step 1: Fetch sign-in methods for this email
+        final signInMethods = await FirebaseAuth.instance
+            .fetchSignInMethodsForEmail(email!);
+
+        if (signInMethods.contains('google.com')) {
+          // Prompt user to sign in with Google first
+          final googleUser = await GoogleSignIn().signIn();
+          final googleAuth = await googleUser!.authentication;
+          final googleCredential = GoogleAuthProvider.credential(
+            accessToken: googleAuth.accessToken,
+            idToken: googleAuth.idToken,
+          );
+
+          // Sign in with Google
+          final googleUserCred = await FirebaseAuth.instance
+              .signInWithCredential(googleCredential);
+
+          // Step 2: Link GitHub to the existing Google account
+          await googleUserCred.user?.linkWithCredential(pendingCred!);
+
+          return googleUserCred.user;
+        } else {
+          print("Account exists with different provider: $signInMethods");
+          // Optionally, show UI prompt to log in with the correct provider
+        }
       }
+
+      print("GitHub sign-in failed: ${e.message}");
+      return null;
+    } catch (e) {
+      print("GitHub sign-in error: $e");
       return null;
     }
   }
