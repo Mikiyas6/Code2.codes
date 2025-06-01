@@ -80,25 +80,29 @@ class AuthService {
 
       final userCredential = await _auth.signInWithCredential(credential);
 
-      // Check if user is new
-      if (userCredential.additionalUserInfo?.isNewUser ?? false) {
-        final user = userCredential.user;
-        if (user != null) {
-          // Store user info in Firestore (or your DB)
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .set({
-                'email': user.email,
-                'displayName': user.displayName,
-                'photoURL': user.photoURL,
-                'createdAt': FieldValue.serverTimestamp(),
-                // Add more fields as needed
-              });
+      final user = userCredential.user;
+      if (user != null) {
+        final userDoc = FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid);
+        final docSnapshot = await userDoc.get();
+
+        if (!docSnapshot.exists) {
+          // First time: create the user document
+          await userDoc.set({
+            'email': user.email,
+            'displayName': user.displayName,
+            'photoURL': user.photoURL,
+            'createdAt': FieldValue.serverTimestamp(),
+            'lastSignedIn': FieldValue.serverTimestamp(),
+          });
+        } else {
+          // User exists: only update lastSignedIn
+          await userDoc.update({'lastSignedIn': FieldValue.serverTimestamp()});
         }
       }
 
-      return userCredential.user;
+      return user;
     } catch (e) {
       print("Google sign-in error: $e");
       return null;
@@ -112,21 +116,52 @@ class AuthService {
   Future<User?> signInWithGitHub() async {
     try {
       final githubProvider = GithubAuthProvider();
-      final userCredential = await _auth.signInWithProvider(githubProvider);
-      final user = userCredential.user;
-      if (user != null) {
-        // Store or update user info in Firestore
-        await FirebaseFirestore.instance.collection('users').doc(user.uid).set({
-          'email': user.email,
-          'displayName': user.displayName,
-          'photoURL': user.photoURL,
-          'provider': 'github',
-          'createdAt': FieldValue.serverTimestamp(),
-        }, SetOptions(merge: true));
+
+      UserCredential userCredential;
+
+      if (kIsWeb) {
+        // 👉 Web uses signInWithPopup
+        userCredential = await FirebaseAuth.instance.signInWithPopup(
+          githubProvider,
+        );
+      } else {
+        // 👉 Mobile uses signInWithProvider
+        userCredential = await FirebaseAuth.instance.signInWithProvider(
+          githubProvider,
+        );
       }
+
+      final user = userCredential.user;
+
+      if (user != null) {
+        final userDoc = FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid);
+        final docSnapshot = await userDoc.get();
+
+        if (!docSnapshot.exists) {
+          // First-time login – create user document
+          await userDoc.set({
+            'email': user.email,
+            'displayName': user.displayName,
+            'photoURL': user.photoURL,
+            'provider': 'github',
+            'createdAt': FieldValue.serverTimestamp(),
+            'lastSignedIn': FieldValue.serverTimestamp(),
+          });
+        } else {
+          // Existing user – update last sign-in timestamp
+          await userDoc.update({'lastSignedIn': FieldValue.serverTimestamp()});
+        }
+      }
+
       return user;
     } catch (e) {
-      print("GitHub sign-in error: $e");
+      print("GitHub sign-in failed: ${e.toString()}");
+      if (e is FirebaseAuthException) {
+        print("Error code: ${e.code}");
+        print("Error message: ${e.message}");
+      }
       return null;
     }
   }
