@@ -7,10 +7,8 @@ class OptionPage1 extends StatefulWidget {
   State<OptionPage1> createState() => _OptionPage1State();
 }
 
-class _OptionPage1State extends State<OptionPage1> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-
+class _OptionPage1State extends State<OptionPage1>
+    with SingleTickerProviderStateMixin {
   final List<Map<String, dynamic>> cards = [
     {
       'color': Colors.green.shade400,
@@ -50,6 +48,42 @@ class _OptionPage1State extends State<OptionPage1> {
     },
   ];
 
+  // For animation
+  double _dragDx = 0.0;
+  bool _isDragging = false;
+
+  void _onDragUpdate(DragUpdateDetails details) {
+    setState(() {
+      _dragDx += details.delta.dx;
+    });
+  }
+
+  void _onDragEnd(DragEndDetails details) {
+    if (_dragDx > 100) {
+      // Swiped right, move top card to bottom
+      setState(() {
+        final card = cards.removeAt(0);
+        cards.add(card);
+        _dragDx = 0.0;
+        _isDragging = false;
+      });
+    } else if (_dragDx < -100) {
+      // Swiped left, move top card to bottom (optional, or keep as is)
+      setState(() {
+        final card = cards.removeAt(0);
+        cards.add(card);
+        _dragDx = 0.0;
+        _isDragging = false;
+      });
+    } else {
+      // Not enough drag, reset
+      setState(() {
+        _dragDx = 0.0;
+        _isDragging = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,127 +92,52 @@ class _OptionPage1State extends State<OptionPage1> {
         child: Column(
           children: [
             const SizedBox(height: 80),
-            // Swipable cards
+            // Stacked cards
             SizedBox(
-              height: 200,
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: cards.length,
-                onPageChanged: (index) {
-                  setState(() {
-                    _currentPage = index;
-                  });
-                },
-                itemBuilder: (context, index) {
-                  final card = cards[index];
-                  return GestureDetector(
-                    onTap: () {
-                      // TODO: Handle card selection
-                    },
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Positioned(
-                          top: 40,
-                          child: Container(
-                            width: 230,
-                            height: 130,
-                            decoration: BoxDecoration(
-                              color: Colors.yellow.shade200,
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
+              height: 220,
+              child: Stack(
+                alignment: Alignment.center,
+                children: List.generate(cards.length, (i) {
+                  // Top card is draggable
+                  if (i == 0) {
+                    return Positioned(
+                      top: 20.0 * i,
+                      child: GestureDetector(
+                        onHorizontalDragStart: (_) {
+                          setState(() {
+                            _isDragging = true;
+                          });
+                        },
+                        onHorizontalDragUpdate: _onDragUpdate,
+                        onHorizontalDragEnd: _onDragEnd,
+                        child: Transform.translate(
+                          offset: Offset(_isDragging ? _dragDx : 0, 0),
+                          child: _buildCard(cards[i], scale: 1.0, elevation: 8),
                         ),
-                        Positioned(
-                          top: 20,
-                          child: Container(
-                            width: 250,
-                            height: 140,
-                            decoration: BoxDecoration(
-                              color: Colors.blue.shade100,
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                        ),
-                        Container(
-                          width: 270,
-                          height: 150,
-                          decoration: BoxDecoration(
-                            color: card['color'],
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: (card['icons'] as List<String>)
-                                    .map(
-                                      (icon) => Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 4.0,
-                                        ),
-                                        child: Image.asset(
-                                          icon,
-                                          width: 32,
-                                          height: 32,
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                              ),
-                              const SizedBox(height: 10),
-                              Text(
-                                card['title'],
-                                style: const TextStyle(
-                                  fontFamily: 'Jost',
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
-                                ),
-                              ),
-                              const SizedBox(height: 6),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 12.0,
-                                ),
-                                child: Text(
-                                  card['desc'],
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontFamily: 'Mulish',
-                                    fontSize: 12,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-            const SizedBox(height: 32),
-            // Dots indicator
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: List.generate(
-                cards.length,
-                (index) => AnimatedContainer(
-                  duration: const Duration(milliseconds: 300),
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  width: _currentPage == index ? 18 : 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: _currentPage == index
-                        ? const Color(0xFF0961F5)
-                        : Colors.blue.shade200,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                ),
+                      ),
+                    );
+                  }
+                  // Second card
+                  else if (i == 1) {
+                    return Positioned(
+                      top: 20.0 * i,
+                      child: Transform.scale(
+                        scale: 0.96,
+                        child: _buildCard(cards[i], scale: 0.96, elevation: 4),
+                      ),
+                    );
+                  }
+                  // Third card
+                  else {
+                    return Positioned(
+                      top: 20.0 * i,
+                      child: Transform.scale(
+                        scale: 0.92,
+                        child: _buildCard(cards[i], scale: 0.92, elevation: 2),
+                      ),
+                    );
+                  }
+                }).reversed.toList(),
               ),
             ),
             const SizedBox(height: 40),
@@ -190,6 +149,68 @@ class _OptionPage1State extends State<OptionPage1> {
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
                 color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCard(
+    Map<String, dynamic> card, {
+    double scale = 1.0,
+    double elevation = 2,
+  }) {
+    return Material(
+      elevation: elevation,
+      borderRadius: BorderRadius.circular(30),
+      child: Container(
+        width: 270 * scale,
+        height: 150 * scale,
+        decoration: BoxDecoration(
+          color: card['color'],
+          borderRadius: BorderRadius.circular(30),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: (card['icons'] as List<String>)
+                  .map(
+                    (icon) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: Image.asset(
+                        icon,
+                        width: 32 * scale,
+                        height: 32 * scale,
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              card['title'],
+              style: TextStyle(
+                fontFamily: 'Jost',
+                fontSize: 18 * scale,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12.0),
+              child: Text(
+                card['desc'],
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Mulish',
+                  fontSize: 12 * scale,
+                  color: Colors.white,
+                ),
               ),
             ),
           ],
