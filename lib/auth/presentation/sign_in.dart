@@ -87,7 +87,7 @@ class _SignInState extends State<SignIn> {
                             ),
                           );
                         } else {
-                          Navigator.pushReplacementNamed(context, '/home');
+                          Navigator.pushReplacementNamed(context, '/options');
                         }
                       },
                       size: size,
@@ -105,7 +105,7 @@ class _SignInState extends State<SignIn> {
                             ),
                           );
                         } else {
-                          Navigator.pushReplacementNamed(context, '/home');
+                          Navigator.pushReplacementNamed(context, '/options');
                         }
                       },
                       size: size,

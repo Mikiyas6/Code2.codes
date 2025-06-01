@@ -76,7 +76,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                         );
                       } else {
-                        Navigator.pushReplacementNamed(context, '/home');
+                        Navigator.pushReplacementNamed(context, '/options');
                       }
                     },
                   ),
@@ -149,7 +149,7 @@ class _SignUpState extends State<SignUp> {
                         const SnackBar(content: Text('Sign up failed.')),
                       );
                     } else {
-                      Navigator.pushReplacementNamed(context, '/home');
+                      Navigator.pushReplacementNamed(context, '/options');
                     }
                   }),
                   SizedBox(height: size.height * 0.02),
