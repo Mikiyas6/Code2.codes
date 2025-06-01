@@ -11,7 +11,12 @@ class _OptionPage1State extends State<OptionPage1>
     with SingleTickerProviderStateMixin {
   final List<Map<String, dynamic>> cards = [
     {
-      'color': Colors.green.shade400,
+      // 1st card: 14B8A6 to 10B981
+      'gradient': const LinearGradient(
+        colors: [Color(0xFF14B8A6), Color(0xFF10B981)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
       'icons': [
         'assets/facebook.png',
         'assets/apple.png',
@@ -23,28 +28,27 @@ class _OptionPage1State extends State<OptionPage1>
           'Select a specific tech company, and we will provide a curated learning path based on DSA topics and questions frequently asked in MAANG Interviews',
     },
     {
-      'color': Colors.purple.shade400,
-      'icons': [
-        'assets/google.png',
-        'assets/amazon.png',
-        'assets/apple.png',
-        'assets/facebook.png',
-      ],
-      'title': 'Master DSA Concepts',
-      'desc':
-          'Sharpen your skills with handpicked DSA problems and ace your coding interviews with confidence.',
+      // 2nd card: 60A5FA to A78BFA
+      'gradient': const LinearGradient(
+        colors: [Color(0xFF60A5FA), Color(0xFFA78BFA)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      'icons': ['assets/second_card.jpeg'],
+      'title': 'Question Guided Path',
+      'desc': 'Solve 1 Easy Linked List Question\n(Est. 5 mins)',
     },
     {
-      'color': Colors.orange.shade400,
-      'icons': [
-        'assets/amazon.png',
-        'assets/facebook.png',
-        'assets/apple.png',
-        'assets/google.png',
-      ],
-      'title': 'Practice Real Interview Qs',
+      // 3rd card: FDE68A to 166534
+      'gradient': const LinearGradient(
+        colors: [Color(0xFFFDE68A), Color(0xFF166534)],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      'icons': ['assets/third_card.jpeg'],
+      'title': 'Foundational DSA Path',
       'desc':
-          'Practice with real interview questions asked by top tech companies and get detailed solutions.',
+          'Build A Solid Foundation. \nMaster DSA Topics From The Ground Up.',
     },
   ];
 
@@ -89,69 +93,87 @@ class _OptionPage1State extends State<OptionPage1>
     return Scaffold(
       backgroundColor: const Color(0xFFF5F9FF),
       body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: 80),
-            // Stacked cards
-            SizedBox(
-              height: 220,
-              child: Stack(
-                alignment: Alignment.center,
-                children: List.generate(cards.length, (i) {
-                  // Top card is draggable
-                  if (i == 0) {
-                    return Positioned(
-                      top: 20.0 * i,
-                      child: GestureDetector(
-                        onHorizontalDragStart: (_) {
-                          setState(() {
-                            _isDragging = true;
-                          });
-                        },
-                        onHorizontalDragUpdate: _onDragUpdate,
-                        onHorizontalDragEnd: _onDragEnd,
-                        child: Transform.translate(
-                          offset: Offset(_isDragging ? _dragDx : 0, 0),
-                          child: _buildCard(cards[i], scale: 1.0, elevation: 8),
+        child: Center(
+          child: Column(
+            children: [
+              const SizedBox(height: 80),
+              // Stacked cards
+              SizedBox(
+                height: 220,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: List.generate(cards.length, (i) {
+                    // Define rotation angles for each card (in radians)
+                    final angles = [-0.12, 0.0, 0.12]; // left, center, right
+                    // Top card is draggable and always at index 0
+                    if (i == 0) {
+                      return Positioned(
+                        child: GestureDetector(
+                          onHorizontalDragStart: (_) {
+                            setState(() {
+                              _isDragging = true;
+                            });
+                          },
+                          onHorizontalDragUpdate: _onDragUpdate,
+                          onHorizontalDragEnd: _onDragEnd,
+                          child: Transform.translate(
+                            offset: Offset(_isDragging ? _dragDx : 0, 0),
+                            child: Transform.rotate(
+                              angle: angles[i],
+                              child: _buildCard(
+                                cards[i],
+                                scale: 1.0,
+                                elevation: 8,
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    );
-                  }
-                  // Second card
-                  else if (i == 1) {
-                    return Positioned(
-                      top: 20.0 * i,
-                      child: Transform.scale(
-                        scale: 0.96,
-                        child: _buildCard(cards[i], scale: 0.96, elevation: 4),
-                      ),
-                    );
-                  }
-                  // Third card
-                  else {
-                    return Positioned(
-                      top: 20.0 * i,
-                      child: Transform.scale(
-                        scale: 0.92,
-                        child: _buildCard(cards[i], scale: 0.92, elevation: 2),
-                      ),
-                    );
-                  }
-                }).reversed.toList(),
+                      );
+                    } else if (i == 1) {
+                      return Positioned(
+                        child: Transform.rotate(
+                          angle: angles[i],
+                          child: Transform.scale(
+                            scale: 0.96,
+                            child: _buildCard(
+                              cards[i],
+                              scale: 0.96,
+                              elevation: 4,
+                            ),
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Positioned(
+                        child: Transform.rotate(
+                          angle: angles[i],
+                          child: Transform.scale(
+                            scale: 0.92,
+                            child: _buildCard(
+                              cards[i],
+                              scale: 0.92,
+                              elevation: 2,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                  }).reversed.toList(),
+                ),
               ),
-            ),
-            const SizedBox(height: 40),
-            const Text(
-              'You can Choose Any Path You Would\nLike To Pursue',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'Jost',
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
+              const SizedBox(height: 70),
+              const Text(
+                'You can Choose Any Path You Would\nLike To Pursue',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontFamily: 'Jost',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.black87,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -162,59 +184,106 @@ class _OptionPage1State extends State<OptionPage1>
     double scale = 1.0,
     double elevation = 2,
   }) {
+    // If only one icon, use the alternate layout
+    final isSingleImage = (card['icons'] as List).length == 1;
+
     return Material(
       elevation: elevation,
       borderRadius: BorderRadius.circular(30),
       child: Container(
         width: 270 * scale,
-        height: 150 * scale,
+        height: 200 * scale,
         decoration: BoxDecoration(
-          color: card['color'],
+          gradient: card['gradient'], // Use gradient instead of color
           borderRadius: BorderRadius.circular(30),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: (card['icons'] as List<String>)
-                  .map(
-                    (icon) => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                      child: Image.asset(
-                        icon,
-                        width: 32 * scale,
-                        height: 32 * scale,
+        child: isSingleImage
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Title
+                  Text(
+                    card['title'],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Jost',
+                      fontSize: 18 * scale,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 16), // Increased spacing
+                  // Bigger centered image
+                  Image.asset(
+                    card['icons'][0],
+                    width: 90 * scale, // Increased size
+                    height: 90 * scale, // Increased size
+                  ),
+                  const SizedBox(height: 16), // Increased spacing
+                  // Description
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Text(
+                      card['desc'],
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Mulish',
+                        fontSize: 12 * scale,
+                        color: Colors.white,
                       ),
                     ),
-                  )
-                  .toList(),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              card['title'],
-              style: TextStyle(
-                fontFamily: 'Jost',
-                fontSize: 18 * scale,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
+                  ),
+                ],
+              )
+            : Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // Icons row
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: (card['icons'] as List<String>)
+                        .map(
+                          (icon) => Padding(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 4.0,
+                            ),
+                            child: Image.asset(
+                              icon,
+                              width: 32 * scale,
+                              height: 32 * scale,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  const SizedBox(height: 10),
+                  // Title
+                  Text(
+                    card['title'],
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Jost',
+                      fontSize: 18 * scale,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  // Description
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Text(
+                      card['desc'],
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontFamily: 'Mulish',
+                        fontSize: 12 * scale,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
-            const SizedBox(height: 6),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12.0),
-              child: Text(
-                card['desc'],
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontFamily: 'Mulish',
-                  fontSize: 12 * scale,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

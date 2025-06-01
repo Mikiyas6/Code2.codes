@@ -47,7 +47,7 @@ class _SignInState extends State<SignIn> {
         const SnackBar(content: Text('Failed to sign in. Please try again.')),
       );
     } else {
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/options');
     }
   }
 

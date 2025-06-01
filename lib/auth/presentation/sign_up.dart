@@ -95,7 +95,7 @@ class _SignUpState extends State<SignUp> {
                           ),
                         );
                       } else {
-                        Navigator.pushReplacementNamed(context, '/home');
+                        Navigator.pushReplacementNamed(context, '/options');
                       }
                     },
                   ),
