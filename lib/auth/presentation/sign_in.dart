@@ -19,6 +19,7 @@ class _SignInState extends State<SignIn> {
   final AuthService _authService = AuthService();
 
   bool _obscurePassword = true;
+  bool _showEmailFields = false;
 
   @override
   void dispose() {
@@ -113,11 +114,68 @@ class _SignInState extends State<SignIn> {
                     SizedBox(height: size.height * 0.02),
                     signInWithText(),
                     SizedBox(height: size.height * 0.02),
-                    emailTextField(size),
-                    SizedBox(height: size.height * 0.02),
-                    passwordTextField(size),
-                    SizedBox(height: size.height * 0.03),
-                    signInButton(size),
+                    if (!_showEmailFields)
+                      SignInSocialButton(
+                        key: const ValueKey('email_sign_in'),
+                        iconPath:
+                            'assets/email_icon.svg', // Use your PNG asset here
+                        text: 'Continue with Email',
+                        size: size,
+                        onPressed: () {
+                          setState(() {
+                            _showEmailFields = true;
+                          });
+                        },
+                      ),
+                    if (_showEmailFields) ...[
+                      emailTextField(size),
+                      SizedBox(height: size.height * 0.02),
+                      passwordTextField(size),
+                      // Add "Forgot your password?" link here
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: TextButton(
+                          onPressed: () async {
+                            final email = _emailController.text.trim();
+                            if (email.isEmpty) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Please enter your email to reset password.',
+                                  ),
+                                ),
+                              );
+                              return;
+                            }
+                            final result = await _authService
+                                .sendPasswordResetEmail(email);
+                            if (result == true) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Password reset email sent!'),
+                                ),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Failed to send reset email.'),
+                                ),
+                              );
+                            }
+                          },
+                          child: Text(
+                            "Forgot your password?",
+                            style: GoogleFonts.inter(
+                              color: const Color(0xFF0961F5),
+                              fontWeight: FontWeight.w500,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: size.height * 0.03),
+                      signInButton(size),
+                    ],
                     SizedBox(height: size.height * 0.02),
                     footerText(),
                   ],

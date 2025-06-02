@@ -193,6 +193,17 @@ class AuthService {
   // Register with GitHub (same as sign-in)
   Future<User?> registerWithGitHub() async => signInWithGitHub();
 
+  // Send password reset email
+  Future<bool> sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+      return true;
+    } catch (e) {
+      print("Password reset error: $e");
+      return false;
+    }
+  }
+
   // Sign out
   Future<void> signOut() async {
     try {

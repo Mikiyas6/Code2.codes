@@ -14,25 +14,21 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _confirmPasswordController = TextEditingController();
   final _authService = AuthService();
 
   final _emailFocus = FocusNode();
   final _passwordFocus = FocusNode();
-  final _confirmPasswordFocus = FocusNode();
 
   bool _obscurePassword = true;
-  bool _obscureConfirmPassword = true;
   bool _agreeToTerms = false;
+  bool _showEmailFields = false; // <-- Add this
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _confirmPasswordController.dispose();
     _emailFocus.dispose();
     _passwordFocus.dispose();
-    _confirmPasswordFocus.dispose();
     super.dispose();
   }
 
@@ -102,56 +98,59 @@ class _SignUpState extends State<SignUp> {
                   SizedBox(height: size.height * 0.02),
                   orDivider(),
                   SizedBox(height: size.height * 0.02),
-                  emailTextField(size),
-                  SizedBox(height: size.height * 0.02),
-                  passwordTextField(size),
-                  SizedBox(height: size.height * 0.02),
-                  confirmPasswordTextField(size),
-                  SizedBox(height: size.height * 0.02),
-                  termsCheckbox(),
-                  SizedBox(height: size.height * 0.03),
-                  signUpButton(size, () async {
-                    final email = _emailController.text;
-                    final password = _passwordController.text;
-                    final confirmPassword = _confirmPasswordController.text;
+                  // Show "Continue with Email" button or the fields
+                  if (!_showEmailFields)
+                    SignInSocialButton(
+                      key: const ValueKey('email_sign_up'),
+                      iconPath:
+                          'assets/email_icon.svg', // Use your email SVG asset here
+                      text: 'Continue with Email',
+                      size: size,
+                      onPressed: () {
+                        setState(() {
+                          _showEmailFields = true;
+                        });
+                      },
+                    ),
+                  if (_showEmailFields) ...[
+                    emailTextField(size),
+                    SizedBox(height: size.height * 0.02),
+                    passwordTextField(size),
+                    SizedBox(height: size.height * 0.02),
+                    termsCheckbox(),
+                    SizedBox(height: size.height * 0.03),
+                    signUpButton(size, () async {
+                      final email = _emailController.text;
+                      final password = _passwordController.text;
 
-                    if (!_agreeToTerms) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('You must agree to the terms.'),
-                        ),
-                      );
-                      return;
-                    }
-                    if (email.isEmpty ||
-                        password.isEmpty ||
-                        confirmPassword.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Please fill all fields.'),
-                        ),
-                      );
-                      return;
-                    }
-                    if (password != confirmPassword) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Passwords do not match.'),
-                        ),
-                      );
-                      return;
-                    }
+                      if (!_agreeToTerms) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('You must agree to the terms.'),
+                          ),
+                        );
+                        return;
+                      }
+                      if (email.isEmpty || password.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Please fill all fields.'),
+                          ),
+                        );
+                        return;
+                      }
 
-                    final user = await _authService
-                        .registerWithEmailAndPassword(email, password);
-                    if (user == null) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('Sign up failed.')),
-                      );
-                    } else {
-                      Navigator.pushReplacementNamed(context, '/options');
-                    }
-                  }),
+                      final user = await _authService
+                          .registerWithEmailAndPassword(email, password);
+                      if (user == null) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Sign up failed.')),
+                        );
+                      } else {
+                        Navigator.pushReplacementNamed(context, '/options');
+                      }
+                    }),
+                  ],
                   SizedBox(height: size.height * 0.02),
                   footerText(),
                 ],
@@ -296,73 +295,6 @@ class _SignUpState extends State<SignUp> {
               onPressed: () {
                 setState(() {
                   _obscurePassword = !_obscurePassword;
-                });
-              },
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget confirmPasswordTextField(Size size) {
-    bool isFocused = _confirmPasswordFocus.hasFocus;
-    return Container(
-      height: size.height / 11,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14.0),
-        gradient: isFocused
-            ? const LinearGradient(
-                colors: [Color(0xFF0961F5), Color(0xFF7F56D9)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              )
-            : null,
-        color: isFocused ? null : Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      padding: const EdgeInsets.all(1.5),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          color: Colors.white,
-        ),
-        child: TextField(
-          controller: _confirmPasswordController,
-          focusNode: _confirmPasswordFocus,
-          onTap: () => setState(() {}),
-          onChanged: (_) => setState(() {}),
-          style: GoogleFonts.inter(
-            fontSize: 16.0,
-            color: const Color(0xFF15224F),
-          ),
-          obscureText: _obscureConfirmPassword,
-          keyboardType: TextInputType.visiblePassword,
-          cursorColor: const Color(0xFF15224F),
-          decoration: InputDecoration(
-            labelText: 'Confirm Password',
-            labelStyle: GoogleFonts.inter(
-              fontSize: 12.0,
-              color: const Color(0xFF969AA8),
-            ),
-            border: InputBorder.none,
-            suffixIcon: IconButton(
-              icon: Icon(
-                _obscureConfirmPassword
-                    ? Icons.visibility_off
-                    : Icons.visibility,
-                color: const Color(0xFF969AA8),
-              ),
-              onPressed: () {
-                setState(() {
-                  _obscureConfirmPassword = !_obscureConfirmPassword;
                 });
               },
             ),
