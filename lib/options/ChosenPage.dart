@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'ProgressScreen.dart';
 
 class ChosenPage extends StatelessWidget {
   final Map<String, dynamic> chosenCard;
@@ -14,7 +15,17 @@ class ChosenPage extends StatelessWidget {
         child: Center(
           child: Column(
             children: [
-              const SizedBox(height: 60),
+              // Back arrow button at the top
+              Align(
+                alignment: Alignment.topLeft,
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.black87, size: 28),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+              const SizedBox(height: 32),
               // Card display
               Container(
                 width: 270,
@@ -133,7 +144,10 @@ class ChosenPage extends StatelessWidget {
                   elevation: 2,
                 ),
                 onPressed: () {
-                  Navigator.pushReplacementNamed(context, '/home');
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ProgressScreen()),
+                  );
                 },
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
