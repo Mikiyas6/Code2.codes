@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:code2codes/screens/home/home.dart';
 
 class ProgressScreen extends StatefulWidget {
-  const ProgressScreen({super.key});
+  final Map<String, dynamic> chosenCard;
+  const ProgressScreen({super.key, required this.chosenCard});
 
   @override
   State<ProgressScreen> createState() => _ProgressScreenState();
@@ -128,7 +130,13 @@ class _ProgressScreenState extends State<ProgressScreen>
                         shadowColor: Colors.tealAccent,
                       ),
                       onPressed: () {
-                        Navigator.pushReplacementNamed(context, '/home');
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                Home(chosenCard: widget.chosenCard),
+                          ),
+                        );
                       },
                       label: const Text(
                         "Start",

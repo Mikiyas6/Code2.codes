@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 
 class ProgressLoadingScreen extends StatefulWidget {
-  const ProgressLoadingScreen({super.key});
+  final Map<String, dynamic> chosenCard;
+  const ProgressLoadingScreen({super.key, required this.chosenCard});
 
   @override
   State<ProgressLoadingScreen> createState() => _ProgressLoadingScreenState();
@@ -32,7 +33,9 @@ class _ProgressLoadingScreenState extends State<ProgressLoadingScreen>
       if (mounted) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const ProgressScreen()),
+          MaterialPageRoute(
+            builder: (context) => ProgressScreen(chosenCard: widget.chosenCard),
+          ),
         );
       }
     });

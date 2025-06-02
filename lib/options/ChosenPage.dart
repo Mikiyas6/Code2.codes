@@ -148,10 +148,11 @@ class ChosenPage extends StatelessWidget {
                   elevation: 2,
                 ),
                 onPressed: () {
-                  Navigator.pushReplacement(
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const ProgressLoadingScreen(),
+                      builder: (context) =>
+                          ProgressLoadingScreen(chosenCard: chosenCard),
                     ),
                   );
                 },
