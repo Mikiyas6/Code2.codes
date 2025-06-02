@@ -1,4 +1,4 @@
-import 'package:code2codes/options/OptionPage1.dart';
+import 'package:code2codes/options/OptionPage.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
         '/signin': (context) => const SignIn(),
         '/signup': (context) => const SignUp(),
         '/home': (context) => const Home(),
-        '/options': (context) => const OptionPage1(), // <-- Add this route
+        '/options': (context) => const Optionpage(), // <-- Add this route
         // Add other routes as needed
       },
       home: Wrapper(),

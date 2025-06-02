@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'ChosenPage.dart';
 
-class OptionPage1 extends StatefulWidget {
-  const OptionPage1({super.key});
+class Optionpage extends StatefulWidget {
+  const Optionpage({super.key});
 
   @override
-  State<OptionPage1> createState() => _OptionPage1State();
+  State<Optionpage> createState() => _OptionpageState();
 }
 
-class _OptionPage1State extends State<OptionPage1>
+class _OptionpageState extends State<Optionpage>
     with SingleTickerProviderStateMixin {
   final List<Map<String, dynamic>> cards = [
     {
@@ -103,12 +104,26 @@ class _OptionPage1State extends State<OptionPage1>
                 child: Stack(
                   alignment: Alignment.center,
                   children: List.generate(cards.length, (i) {
-                    // Define rotation angles for each card (in radians)
-                    final angles = [-0.12, 0.0, 0.12]; // left, center, right
-                    // Top card is draggable and always at index 0
+                    // Increase tilt for back cards
+                    final angles = [
+                      0.0,
+                      -0.28,
+                      0.28,
+                    ]; // More tilt for back cards
                     if (i == 0) {
+                      // Top card: not rotated, draggable
                       return Positioned(
                         child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ChosenPage(
+                                  chosenCard: cards[0],
+                                ), // Pass the full card map
+                              ),
+                            );
+                          },
                           onHorizontalDragStart: (_) {
                             setState(() {
                               _isDragging = true;
@@ -118,41 +133,25 @@ class _OptionPage1State extends State<OptionPage1>
                           onHorizontalDragEnd: _onDragEnd,
                           child: Transform.translate(
                             offset: Offset(_isDragging ? _dragDx : 0, 0),
-                            child: Transform.rotate(
-                              angle: angles[i],
-                              child: _buildCard(
-                                cards[i],
-                                scale: 1.0,
-                                elevation: 8,
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    } else if (i == 1) {
-                      return Positioned(
-                        child: Transform.rotate(
-                          angle: angles[i],
-                          child: Transform.scale(
-                            scale: 0.96,
                             child: _buildCard(
                               cards[i],
-                              scale: 0.96,
-                              elevation: 4,
+                              scale: 1.0,
+                              elevation: 8,
                             ),
                           ),
                         ),
                       );
                     } else {
+                      // Back cards: more rotated and scaled
                       return Positioned(
                         child: Transform.rotate(
                           angle: angles[i],
                           child: Transform.scale(
-                            scale: 0.92,
+                            scale: i == 1 ? 0.96 : 0.92,
                             child: _buildCard(
                               cards[i],
-                              scale: 0.92,
-                              elevation: 2,
+                              scale: i == 1 ? 0.96 : 0.92,
+                              elevation: i == 1 ? 4 : 2,
                             ),
                           ),
                         ),
@@ -167,7 +166,7 @@ class _OptionPage1State extends State<OptionPage1>
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontFamily: 'Jost',
-                  fontSize: 16,
+                  fontSize: 18,
                   fontWeight: FontWeight.w600,
                   color: Colors.black87,
                 ),
