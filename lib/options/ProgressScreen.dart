@@ -112,29 +112,35 @@ class _ProgressScreenState extends State<ProgressScreen>
                     ),
                   ),
                   const SizedBox(height: 40),
-                  ElevatedButton.icon(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF10B981),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 36,
-                        vertical: 16,
+                  SizedBox(
+                    width: 300,
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0961F5),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 36,
+                          vertical: 16,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        elevation: 4,
+                        shadowColor: Colors.tealAccent,
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
+                      onPressed: () {
+                        Navigator.pushReplacementNamed(context, '/home');
+                      },
+                      label: const Text(
+                        "Start",
+                        style: TextStyle(
+                          fontFamily: 'Jost',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
                       ),
-                      elevation: 4,
-                      shadowColor: Colors.tealAccent,
-                    ),
-                    onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/home');
-                    },
-                    icon: const Icon(Icons.arrow_forward, color: Colors.white),
-                    label: const Text(
-                      "Go To Dashboard",
-                      style: TextStyle(
-                        fontFamily: 'Jost',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
+                      icon: const Icon(
+                        Icons.arrow_forward,
                         color: Colors.white,
                       ),
                     ),
