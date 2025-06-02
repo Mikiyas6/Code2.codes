@@ -1,5 +1,5 @@
+import 'package:code2codes/options/ProgressLoadingScreen.dart';
 import 'package:flutter/material.dart';
-import 'ProgressScreen.dart';
 
 class ChosenPage extends StatelessWidget {
   final Map<String, dynamic> chosenCard;
@@ -19,7 +19,11 @@ class ChosenPage extends StatelessWidget {
               Align(
                 alignment: Alignment.topLeft,
                 child: IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.black87, size: 28),
+                  icon: const Icon(
+                    Icons.arrow_back,
+                    color: Colors.black87,
+                    size: 28,
+                  ),
                   onPressed: () {
                     Navigator.pop(context);
                   },
@@ -146,7 +150,9 @@ class ChosenPage extends StatelessWidget {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const ProgressScreen()),
+                    MaterialPageRoute(
+                      builder: (context) => const ProgressLoadingScreen(),
+                    ),
                   );
                 },
                 child: Row(
