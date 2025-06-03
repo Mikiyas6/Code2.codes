@@ -82,6 +82,9 @@ flutter:
     - assets/second_card.jpeg
     - assets/third_card.jpeg
     - assets/email_icon.svg
+    - assets/profile.jpg
+    - assets/tree.jpg
+    - assets/recursion.jpg
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
 

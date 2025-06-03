@@ -83,62 +83,98 @@ class _HomeState extends State<Home> {
       backgroundColor: const Color(0xFFF5F9FF),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Greeting
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Hello, $userName👋",
-                          style: const TextStyle(
-                            fontFamily: 'Jost',
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black87,
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 239, 239, 251),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Hello, $userName👋",
+                            style: const TextStyle(
+                              fontFamily: 'Jost',
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.black87,
+                            ),
                           ),
+                          const SizedBox(height: 2),
+                          const Text(
+                            "Good to see you back.",
+                            style: TextStyle(
+                              fontFamily: 'Mulish',
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: const BoxDecoration(
+                                color: Color.fromARGB(255, 203, 205, 212),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.notifications,
+                                size: 28, // Make notification icon larger
+                                color: Colors.white,
+                              ),
+                            ),
+                            // Blue dot indicator
+                            Positioned(
+                              top: 6,
+                              right: 6,
+                              child: Container(
+                                width: 10,
+                                height: 10,
+                                decoration: BoxDecoration(
+                                  color: Colors.blue,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 1.5,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 2),
-                        const Text(
-                          "Good to see you back.",
-                          style: TextStyle(
-                            fontFamily: 'Mulish',
-                            fontSize: 14,
-                            color: Colors.black54,
+                        const SizedBox(width: 12),
+                        // Profile image as big as notification icon
+                        CircleAvatar(
+                          radius:
+                              18, // Same as notification icon's outer radius
+                          backgroundColor: Colors.grey[300],
+                          backgroundImage: const AssetImage(
+                            'assets/profile.jpg',
                           ),
                         ),
                       ],
                     ),
-                  ),
-                  // Notification and profile icons
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          color: Colors.red,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.notifications,
-                          size: 18,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      CircleAvatar(
-                        radius: 18,
-                        backgroundColor: Colors.grey[300],
-                        child: const Icon(Icons.person, color: Colors.black54),
-                      ),
-                    ],
-                  ),
-                ],
+                  ],
+                ),
               ),
               const SizedBox(height: 18),
               // Stats Row
@@ -244,22 +280,25 @@ class _HomeState extends State<Home> {
               ),
               const SizedBox(height: 12),
               // Recent learning cards
-              Row(
-                children: [
-                  _learningCard(
-                    image: Icons.account_tree,
-                    title: "Trees Overview",
-                    subtitle: "Everything You need to know about Trees",
-                    progress: 5 / 12,
-                  ),
-                  const SizedBox(width: 12),
-                  _learningCard(
-                    image: Icons.device_hub,
-                    title: "Recursion",
-                    subtitle: "A deep dive into the world of Recursion",
-                    progress: 2 / 10,
-                  ),
-                ],
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _learningCard(
+                      image: 'assets/tree.jpg', // <-- Use your image asset
+                      title: "Trees Overview",
+                      subtitle: "Everything You need to know about Trees",
+                      progress: 5 / 12,
+                    ),
+                    const SizedBox(width: 12),
+                    _learningCard(
+                      image: 'assets/recursion.jpg', // <-- Use your image asset
+                      title: "Recursion",
+                      subtitle: "A deep dive into the world of Recursion",
+                      progress: 2 / 10,
+                    ),
+                  ],
+                ),
               ),
               const SizedBox(height: 24),
             ],
@@ -275,7 +314,9 @@ class _HomeState extends State<Home> {
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(
-            icon: Icon(Icons.play_arrow),
+            icon: Icon(
+              Icons.fitness_center,
+            ), // Changed from play_arrow to dumbbell
             label: "Practice",
           ),
           BottomNavigationBarItem(
@@ -308,64 +349,84 @@ class _HomeState extends State<Home> {
   }
 
   Widget _learningCard({
-    required IconData image,
+    required String image,
     required String title,
     required String subtitle,
     required double progress,
   }) {
     return SizedBox(
-      width: 160,
+      width: 220,
       child: Container(
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(22),
           boxShadow: [
             BoxShadow(
               color: Colors.black12,
-              blurRadius: 8,
-              offset: Offset(0, 2),
+              blurRadius: 12,
+              offset: Offset(0, 4),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(image, size: 36, color: const Color(0xFF6366F1)),
-            const SizedBox(height: 8),
+            // Professional image display
+            Center(
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: AspectRatio(
+                  aspectRatio: 1.4, // Nice card aspect
+                  child: Image.asset(
+                    image,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) => Container(
+                      color: Colors.grey[200],
+                      child: const Icon(
+                        Icons.broken_image,
+                        size: 40,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
             Text(
               title,
               style: const TextStyle(
                 fontFamily: 'Jost',
                 fontWeight: FontWeight.bold,
-                fontSize: 15,
+                fontSize: 18,
                 color: Colors.black87,
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 6),
             Text(
               subtitle,
               style: const TextStyle(
                 fontFamily: 'Mulish',
-                fontSize: 12,
+                fontSize: 14,
                 color: Colors.black54,
               ),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 14),
             LinearProgressIndicator(
               value: progress,
               backgroundColor: const Color(0xFFE3E8F0),
               color: const Color(0xFF6366F1),
-              minHeight: 6,
+              minHeight: 8,
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 4),
             Align(
               alignment: Alignment.bottomRight,
               child: Text(
                 "${(progress * 100).toInt()}%",
                 style: const TextStyle(
                   fontFamily: 'Mulish',
-                  fontSize: 11,
+                  fontSize: 12,
                   color: Colors.black45,
                 ),
               ),
