@@ -355,7 +355,7 @@ class _HomeState extends State<Home> {
     required double progress,
   }) {
     return SizedBox(
-      width: 220,
+      width: 260,
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -371,16 +371,18 @@ class _HomeState extends State<Home> {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
-            // Professional image display
             Center(
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(14),
+                borderRadius: BorderRadius.circular(12),
                 child: AspectRatio(
-                  aspectRatio: 1.4, // Nice card aspect
+                  aspectRatio: 2.2,
                   child: Image.asset(
                     image,
-                    fit: BoxFit.cover,
+                    fit: BoxFit
+                        .contain, // Changed from BoxFit.cover to BoxFit.contain
+                    alignment: Alignment.center,
                     errorBuilder: (context, error, stackTrace) => Container(
                       color: Colors.grey[200],
                       child: const Icon(
@@ -393,33 +395,35 @@ class _HomeState extends State<Home> {
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 10),
             Text(
               title,
               style: const TextStyle(
                 fontFamily: 'Jost',
                 fontWeight: FontWeight.bold,
-                fontSize: 18,
+                fontSize: 17,
                 color: Colors.black87,
               ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 4),
             Text(
               subtitle,
               style: const TextStyle(
                 fontFamily: 'Mulish',
-                fontSize: 14,
+                fontSize: 13,
                 color: Colors.black54,
               ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 10),
             LinearProgressIndicator(
               value: progress,
               backgroundColor: const Color(0xFFE3E8F0),
               color: const Color(0xFF6366F1),
-              minHeight: 8,
+              minHeight: 7,
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 2),
             Align(
               alignment: Alignment.bottomRight,
               child: Text(
