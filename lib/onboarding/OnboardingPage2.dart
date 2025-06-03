@@ -1,5 +1,7 @@
+import 'package:code2codes/auth/presentation/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'OnboardingPage3.dart';
+import '../auth/presentation/sign_up.dart'; //  // <-- Import your sign up page
 
 class OnboardingPage2 extends StatelessWidget {
   const OnboardingPage2({super.key});
@@ -19,7 +21,10 @@ class OnboardingPage2 extends StatelessWidget {
                 alignment: Alignment.topRight,
                 child: TextButton(
                   onPressed: () {
-                    // TODO: Implement skip logic
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const SignUp()),
+                    );
                   },
                   child: const Text(
                     'Skip',
