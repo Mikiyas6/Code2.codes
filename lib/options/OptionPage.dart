@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'ChosenPage.dart';
 
 class Optionpage extends StatefulWidget {
@@ -114,15 +116,32 @@ class _OptionpageState extends State<Optionpage>
                       // Top card: not rotated, draggable
                       return Positioned(
                         child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ChosenPage(
-                                  chosenCard: cards[0],
-                                ), // Pass the full card map
-                              ),
-                            );
+                          onTap: () async {
+                            final user = FirebaseAuth.instance.currentUser;
+                            if (user != null) {
+                              final card = cards[0];
+                              await FirebaseFirestore.instance
+                                  .collection('users')
+                                  .doc(user.uid)
+                                  .set({
+                                    'chosenCard': {
+                                      'icons': card['icons'],
+                                      'title': card['title'],
+                                      'desc': card['desc'],
+                                      'gradientColors':
+                                          (card['gradient'] as LinearGradient)
+                                              .colors
+                                              .map((c) => c.value)
+                                              .toList(),
+                                    },
+                                  }, SetOptions(merge: true));
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const ChosenPage(),
+                                ),
+                              );
+                            }
                           },
                           onHorizontalDragStart: (_) {
                             setState(() {
@@ -240,7 +259,7 @@ class _OptionpageState extends State<Optionpage>
                   // Icons row
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: (card['icons'] as List<String>)
+                    children: List<String>.from(card['icons'] as List)
                         .map(
                           (icon) => Padding(
                             padding: const EdgeInsets.symmetric(
