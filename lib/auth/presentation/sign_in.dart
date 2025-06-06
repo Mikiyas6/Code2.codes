@@ -1,3 +1,4 @@
+import 'package:code2codes/options/OptionPage.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -41,14 +42,20 @@ class _SignInState extends State<SignIn> {
       return;
     }
 
-    final user = await _authService.signInWithEmailAndPassword(email, password);
+    final response = await _authService.signInWithEmailAndPassword(
+      email,
+      password,
+    );
 
-    if (user == null) {
+    if (response == null || response.user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to sign in. Please try again.')),
       );
     } else {
-      Navigator.pushReplacementNamed(context, '/options');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const OptionPage()),
+      );
     }
   }
 
@@ -80,16 +87,9 @@ class _SignInState extends State<SignIn> {
                       iconPath: 'assets/google_logo.svg',
                       text: 'Continue with Google',
                       onPressed: () async {
-                        final user = await _authService.signInWithGoogle();
-                        if (user == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('Google sign-in failed.'),
-                            ),
-                          );
-                        } else {
-                          Navigator.pushReplacementNamed(context, '/options');
-                        }
+                        await _authService.signInWithGoogle();
+                        // Supabase OAuth will handle redirect/session.
+                        // You may want to listen for auth state changes elsewhere.
                       },
                       size: size,
                     ),
@@ -98,16 +98,8 @@ class _SignInState extends State<SignIn> {
                       iconPath: 'assets/github_logo.svg',
                       text: 'Continue with Github',
                       onPressed: () async {
-                        final user = await _authService.signInWithGitHub();
-                        if (user == null) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text('GitHub sign-in failed.'),
-                            ),
-                          );
-                        } else {
-                          Navigator.pushReplacementNamed(context, '/options');
-                        }
+                        await _authService.signInWithGitHub();
+                        // Supabase OAuth will handle redirect/session.
                       },
                       size: size,
                     ),
@@ -117,8 +109,7 @@ class _SignInState extends State<SignIn> {
                     if (!_showEmailFields)
                       SignInSocialButton(
                         key: const ValueKey('email_sign_in'),
-                        iconPath:
-                            'assets/email_icon.svg', // Use your PNG asset here
+                        iconPath: 'assets/email_icon.svg',
                         text: 'Continue with Email',
                         size: size,
                         onPressed: () {
@@ -213,10 +204,7 @@ class _SignInState extends State<SignIn> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const Expanded(
-          child: Divider(
-            color: Color.fromARGB(255, 0, 0, 0), // Light gray divider
-            thickness: 0.1,
-          ),
+          child: Divider(color: Color.fromARGB(255, 0, 0, 0), thickness: 0.1),
         ),
         const SizedBox(width: 16),
         Text(
@@ -228,10 +216,7 @@ class _SignInState extends State<SignIn> {
         ),
         const SizedBox(width: 16),
         const Expanded(
-          child: Divider(
-            color: Color.fromARGB(255, 0, 0, 0), // Light gray divider
-            thickness: 0.1,
-          ),
+          child: Divider(color: Color.fromARGB(255, 0, 0, 0), thickness: 0.1),
         ),
       ],
     );
@@ -240,7 +225,7 @@ class _SignInState extends State<SignIn> {
   Widget emailTextField(Size size) => _inputField(
     focusNode: _emailFocus,
     controller: _emailController,
-    label: 'Email/Phone number',
+    label: 'Email',
     isPassword: false,
     size: size,
   );
@@ -262,7 +247,7 @@ class _SignInState extends State<SignIn> {
   }) {
     final isFocused = focusNode.hasFocus;
     return Container(
-      height: size.height / 11,
+      height: size.height / 15,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14.0),
         gradient: isFocused
@@ -328,7 +313,7 @@ class _SignInState extends State<SignIn> {
   Widget signInButton(Size size) => GestureDetector(
     onTap: _handleEmailPasswordSignIn,
     child: Container(
-      height: size.height / 11,
+      height: size.height / 15,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(50.0),
         color: const Color(0xFF0961F5),
@@ -452,7 +437,7 @@ class SignInSocialButton extends StatelessWidget {
               child: Text(
                 text,
                 style: GoogleFonts.inter(
-                  fontSize: 16.0, // Match this to the value in sign_up.dart
+                  fontSize: 16.0,
                   color: const Color(0xFF134140),
                 ),
               ),

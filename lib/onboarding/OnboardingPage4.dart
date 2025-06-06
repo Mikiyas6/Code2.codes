@@ -45,7 +45,7 @@ class OnboardingPage4 extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 150),
               // Illustration
               SizedBox(
                 height: 220,

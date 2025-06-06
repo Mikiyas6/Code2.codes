@@ -1,3 +1,4 @@
+import 'package:code2codes/options/OptionPage.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,7 +22,7 @@ class _SignUpState extends State<SignUp> {
 
   bool _obscurePassword = true;
   bool _agreeToTerms = false;
-  bool _showEmailFields = false; // <-- Add this
+  bool _showEmailFields = false;
 
   @override
   void dispose() {
@@ -64,16 +65,7 @@ class _SignUpState extends State<SignUp> {
                     text: 'Continue with Google',
                     size: size,
                     onPressed: () async {
-                      final user = await _authService.signInWithGoogle();
-                      if (user == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Google sign-in failed.'),
-                          ),
-                        );
-                      } else {
-                        Navigator.pushReplacementNamed(context, '/options');
-                      }
+                      await _authService.signInWithGoogle();
                     },
                   ),
                   SizedBox(height: size.height * 0.03),
@@ -83,27 +75,16 @@ class _SignUpState extends State<SignUp> {
                     text: 'Continue with Github',
                     size: size,
                     onPressed: () async {
-                      final user = await _authService.signInWithGitHub();
-                      if (user == null) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('GitHub sign-in failed.'),
-                          ),
-                        );
-                      } else {
-                        Navigator.pushReplacementNamed(context, '/options');
-                      }
+                      await _authService.signInWithGitHub();
                     },
                   ),
                   SizedBox(height: size.height * 0.02),
                   orDivider(),
                   SizedBox(height: size.height * 0.02),
-                  // Show "Continue with Email" button or the fields
                   if (!_showEmailFields)
                     SignInSocialButton(
                       key: const ValueKey('email_sign_up'),
-                      iconPath:
-                          'assets/email_icon.svg', // Use your email SVG asset here
+                      iconPath: 'assets/email_icon.svg',
                       text: 'Continue with Email',
                       size: size,
                       onPressed: () {
@@ -140,14 +121,19 @@ class _SignUpState extends State<SignUp> {
                         return;
                       }
 
-                      final user = await _authService
+                      final response = await _authService
                           .registerWithEmailAndPassword(email, password);
-                      if (user == null) {
+                      if (response == null || response.user == null) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text('Sign up failed.')),
                         );
                       } else {
-                        Navigator.pushReplacementNamed(context, '/options');
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const OptionPage(),
+                          ),
+                        );
                       }
                     }),
                   ],
@@ -189,7 +175,7 @@ class _SignUpState extends State<SignUp> {
   Widget emailTextField(Size size) {
     bool isFocused = _emailFocus.hasFocus;
     return Container(
-      height: size.height / 11,
+      height: size.height / 15,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14.0),
         gradient: isFocused
@@ -227,7 +213,7 @@ class _SignUpState extends State<SignUp> {
           maxLines: 1,
           cursorColor: const Color(0xFF15224F),
           decoration: InputDecoration(
-            labelText: 'Email or Phone number',
+            labelText: 'Email',
             labelStyle: GoogleFonts.inter(
               fontSize: 12.0,
               color: const Color(0xFF969AA8),
@@ -242,7 +228,7 @@ class _SignUpState extends State<SignUp> {
   Widget passwordTextField(Size size) {
     bool isFocused = _passwordFocus.hasFocus;
     return Container(
-      height: size.height / 11,
+      height: size.height / 15,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14.0),
         gradient: isFocused
@@ -376,7 +362,7 @@ class _SignUpState extends State<SignUp> {
   Widget signUpButton(Size size, VoidCallback onTap) => GestureDetector(
     onTap: onTap,
     child: Container(
-      height: size.height / 11,
+      height: size.height / 15,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(50.0),
         color: const Color(0xFF0961F5),

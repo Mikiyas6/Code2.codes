@@ -1,7 +1,7 @@
 import 'package:code2codes/auth/presentation/sign_up.dart';
 import 'package:flutter/material.dart';
 import 'OnboardingPage4.dart';
-import '../auth/presentation/sign_up.dart'; // <-- Import your sign up page
+// <-- Import your sign up page
 
 class OnboardingPage3 extends StatelessWidget {
   const OnboardingPage3({super.key});
@@ -47,7 +47,7 @@ class OnboardingPage3 extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 150),
               // Illustration (G logo)
               SizedBox(
                 height: 220,

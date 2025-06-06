@@ -1,7 +1,6 @@
 import 'package:code2codes/auth/presentation/sign_up.dart';
 import 'package:flutter/material.dart';
-import 'OnboardingPage3.dart';
-import '../auth/presentation/sign_up.dart'; //  // <-- Import your sign up page
+import 'OnboardingPage3.dart'; // <-- Import your next onboarding page
 
 class OnboardingPage2 extends StatelessWidget {
   const OnboardingPage2({super.key});
@@ -16,33 +15,36 @@ class OnboardingPage2 extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Skip button
-              Align(
-                alignment: Alignment.topRight,
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const SignUp()),
-                    );
-                  },
-                  child: const Text(
-                    'Skip',
-                    style: TextStyle(
-                      fontFamily: 'Jost',
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600, // semibold
-                      color: Colors.black87,
+              // Top Row: Back and Skip buttons
+              Row(
+                mainAxisAlignment:
+                    MainAxisAlignment.end, // Puts Skip button to the right
+                children: [
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const SignUp()),
+                      );
+                    },
+                    child: const Text(
+                      'Skip',
+                      style: TextStyle(
+                        fontFamily: 'Jost',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 150),
               // Illustration
               SizedBox(
                 height: 220,
                 child: Image.asset(
-                  'assets/onboarding2.png', // Place your illustration here
+                  'assets/onboarding2.png',
                   fit: BoxFit.contain,
                 ),
               ),
@@ -54,7 +56,7 @@ class OnboardingPage2 extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: 'Jost',
                   fontSize: 18,
-                  fontWeight: FontWeight.w600, // semibold
+                  fontWeight: FontWeight.w600,
                   color: Colors.black87,
                 ),
               ),
@@ -71,15 +73,15 @@ class OnboardingPage2 extends StatelessWidget {
                   height: 1.5,
                 ),
               ),
-              const Spacer(),
+              const Spacer(), // Push content to bottom
               // Progress indicator and next button
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Progress dots (first is active)
+                  // Progress dots (second is active)
                   Row(
                     children: [
-                      // Active indicator: small rounded rectangle
+                      // Active indicator (first dot)
                       Container(
                         width: 15,
                         height: 8,
@@ -89,6 +91,7 @@ class OnboardingPage2 extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
+                      // Inactive dot
                       Container(
                         width: 10,
                         height: 10,
@@ -98,6 +101,7 @@ class OnboardingPage2 extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
+                      // Inactive dot
                       Container(
                         width: 10,
                         height: 10,
@@ -108,6 +112,7 @@ class OnboardingPage2 extends StatelessWidget {
                       ),
                     ],
                   ),
+
                   // Next button
                   FloatingActionButton(
                     onPressed: () {
