@@ -1,5 +1,7 @@
 import 'package:code2codes/auth/data/auth_service.dart';
 import 'package:code2codes/options/ChosenPage.dart';
+import 'package:code2codes/options/ProgressLoadingScreen.dart';
+import 'package:code2codes/options/ProgressScreen.dart';
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/material.dart';
 import 'package:code2codes/auth/presentation/sign_in.dart';
@@ -35,7 +37,10 @@ class MyApp extends StatelessWidget {
         '/home': (context) => const Home(),
         '/options': (context) => const OptionPage(),
         '/chosen': (context) => const ChosenPage(),
+        '/progressLoadingScreen': (context) => const ProgressLoadingScreen(),
+        '/progressScreen': (context) => const ProgressScreen(),
       },
+
       home: OnboardingPage2(), // <-- Show onboarding every time
     );
   }

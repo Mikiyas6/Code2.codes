@@ -180,15 +180,7 @@ class _OptionPageState extends State<OptionPage>
       }
 
       if (mounted) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) {
-            Future.microtask(() {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const ChosenPage()),
-              );
-            });
-          }
-        });
+        Navigator.of(context).pushNamed('/chosen');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

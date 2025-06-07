@@ -269,13 +269,9 @@ class _ChosenPageState extends State<ChosenPage>
                               ),
                             ),
                             onPressed: () {
-                              Navigator.push(
+                              Navigator.of(
                                 context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const ProgressLoadingScreen(),
-                                ),
-                              );
+                              ).pushNamed('/progressLoadingScreen');
                             },
                           ),
                         ],

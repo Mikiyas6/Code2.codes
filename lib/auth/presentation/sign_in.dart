@@ -52,10 +52,7 @@ class _SignInState extends State<SignIn> {
         const SnackBar(content: Text('Failed to sign in. Please try again.')),
       );
     } else {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const OptionPage()),
-      );
+      Navigator.of(context).pushReplacementNamed('/options');
     }
   }
 

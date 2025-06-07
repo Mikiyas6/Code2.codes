@@ -30,10 +30,7 @@ class _ProgressLoadingScreenState extends State<ProgressLoadingScreen>
     // Show loading for 5 seconds, then navigate to ProgressScreen
     Future.delayed(const Duration(seconds: 5), () {
       if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const ProgressScreen()),
-        );
+        Navigator.of(context).pushNamed('/progressScreen');
       }
     });
   }
