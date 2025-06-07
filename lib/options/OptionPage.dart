@@ -67,7 +67,7 @@ class _OptionPageState extends State<OptionPage>
     super.initState();
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 900),
+      duration: const Duration(milliseconds: 1200),
     );
     _setupOnboardingAnimation();
     Future.delayed(const Duration(milliseconds: 400), () {
@@ -85,7 +85,7 @@ class _OptionPageState extends State<OptionPage>
               _dragDy = -30 * t;
               _dragScale = 1.0 - 0.15 * t;
               _dragAngle = 0.1 * t;
-              _dragOpacity = 1.0 - 0.8 * t;
+              _dragOpacity = 1.0;
             });
           })
           ..addStatusListener((status) async {
@@ -98,7 +98,7 @@ class _OptionPageState extends State<OptionPage>
                 _dragScale = _dragOpacity = 1.0;
                 _dragAngle = 0.0;
               });
-              await Future.delayed(const Duration(milliseconds: 400));
+              await Future.delayed(const Duration(milliseconds: 700));
               if (_isOnboarding) {
                 _animationController.reset();
                 _animationController.forward();
